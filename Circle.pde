@@ -12,7 +12,7 @@ class Circle {
 
 	public void draw() {
 		fill(255); // white circle
-		ellipse(x, y, RADIUS, RADIUS);
+		ellipse(x, y, RADIUS*2, RADIUS*2);
 		fill(0); // black text
 		text(text, x, y);
 	}
