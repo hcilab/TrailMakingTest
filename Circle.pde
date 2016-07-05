@@ -16,4 +16,10 @@ class Circle {
 		fill(0); // black text
 		text(text, x, y);
 	}
+
+	public boolean isMoused() {
+		int relativeX = mouseX - x;
+		int relativeY = mouseY - y;
+		return sqrt(relativeX*relativeX + relativeY*relativeY) < RADIUS;
+	}
 }
