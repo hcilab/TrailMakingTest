@@ -17,7 +17,7 @@ void setup() {
   ellipseMode(CENTER);
   shapeMode(CENTER);
   textAlign(CENTER, CENTER);
-
+  textSize(24);
 
   index = 0;
   errors = 0;
