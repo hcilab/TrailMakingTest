@@ -32,31 +32,52 @@ void generateCirclesTrailA() {
 
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
-    circles.add(new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex)));
+    Circle c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex));
+    while (isTouching(c)){
+      c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex));
+    }
+    circles.add(c);
     texts.remove(textIndex);
   }
 
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
-    circles.add(new Circle((int)random(width/2, width), (int) random(0, height/2), texts.get(textIndex)));
+    Circle c = new Circle((int)random(width/2, width), (int) random(0, height/2), texts.get(textIndex));
+    while (isTouching(c)) {
+      c = new Circle((int)random(width/2, width), (int) random(0, height/2), texts.get(textIndex));
+    }
+    circles.add(c);
     texts.remove(textIndex);
   }
 
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
-    circles.add(new Circle((int)random(0, width/2), (int)random(height/2, height), texts.get(textIndex)));
+    Circle c = new Circle((int)random(0, width/2), (int)random(height/2, height), texts.get(textIndex));
+    while (isTouching(c)) {
+      c = new Circle((int)random(0, width/2), (int)random(height/2, height), texts.get(textIndex));
+    }
+    circles.add(c);
     texts.remove(textIndex);
   }
 
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
-    circles.add(new Circle((int)random(width/2, width), (int)random(height/2, height), texts.get(textIndex)));
+    Circle c = new Circle((int)random(width/2, width), (int)random(height/2, height), texts.get(textIndex));
+    while (isTouching(c)) {
+      c = new Circle((int)random(width/2, width), (int)random(height/2, height), texts.get(textIndex));
+    }
+    circles.add(c);
     texts.remove(textIndex);
   }
 
-  for (int i=0; i<texts.size(); i++) {
+  int circlesLeft = texts.size();
+  for (int i=0; i<circlesLeft; i++) {
     int textIndex = (int)random(texts.size());
-    circles.add(new Circle((int)random(0, width), (int)random(0, height), texts.get(textIndex)));
+    Circle c = new Circle((int)random(0, width), (int)random(0, height), texts.get(textIndex));
+    while (isTouching(c)) {
+      c = new Circle((int)random(0, width), (int)random(0, height), texts.get(textIndex));
+    }
+    circles.add(c);
     texts.remove(textIndex);
   }
 }
@@ -82,4 +103,15 @@ ArrayList<String> generateTrailB() {
   }
 
   return trail;
+}
+
+boolean isTouching(Circle c) {
+  boolean touching = false;
+  for (Circle curr : circles) {
+    if ( sqrt(pow(abs(curr.x - c.x),2.0) + pow((abs(curr.y - c.y)), 2.0)) < 80) {
+      touching = true;
+      break;
+    }
+  }
+  return touching;
 }

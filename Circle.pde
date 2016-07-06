@@ -1,8 +1,8 @@
 class Circle {
 	int RADIUS = 40; //TODO in terms of height/width
-	int x;
-	int y;
-	String text;
+	public int x;
+	public int y;
+	public String text;
 
 	public Circle(int x, int y, String text) {
 		this.x = x;
