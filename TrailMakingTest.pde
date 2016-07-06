@@ -15,6 +15,7 @@ int errors;
 boolean errorLogged;
 String errorLoggedFor;
 boolean returnToPrevious;
+boolean drawCurrentLines;
 
 boolean isTrialA;
 Date timeOfDay;
@@ -49,13 +50,13 @@ void setup() {
   Collections.sort(circles, new TrailAComparator());
   optimizePath();
   returnToPrevious = false;
+  drawCurrentLines = false;
   
   generateTables();
   resultsNewRow = tableResults.addRow(); 
   errorNewRow = tableError.addRow();
   isTrialA = true;
   addCommonValuesToTableStart();
-
 }
 
 
@@ -66,6 +67,8 @@ void draw() {
     if (c.passed && c.isMoused() && returnToPrevious) {
       if (c.text.equals(circles.get(index-1).text)) {
         returnToPrevious = false;
+        drawCurrentLines = true;
+        currentLines.clear();
       }
       r=0;
       g=255;
@@ -77,6 +80,7 @@ void draw() {
       b=0;
     }
     else if (c.isMoused() && c.text.equals(trail.get(index)) && !returnToPrevious) {
+      drawCurrentLines = true;
       currentLines.clear();
       if (index>0) {
         Circle prev = circles.get(index-1);
@@ -121,6 +125,8 @@ void draw() {
         errorLoggedFor = c.text;
         if (index > 0) {
           returnToPrevious = true;
+          drawCurrentLines = false;
+          currentLines.clear();
         }
       }
       r=255;
@@ -139,10 +145,11 @@ void draw() {
     c.draw(r,g,b);
   }
 
-  currentLines.add(new Line(pmouseX, pmouseY, mouseX, mouseY));
-  
-  for (Line l : currentLines) {
-    l.draw(0, 0, 0);
+  if (drawCurrentLines) {
+    currentLines.add(new Line(pmouseX, pmouseY, mouseX, mouseY));
+    for (Line l : currentLines) {
+      l.draw(0, 0, 0);
+    }
   }
   for (Line l : previousLines) {
     l.draw(169, 169, 169);
