@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 ArrayList<Circle> circles = new ArrayList<Circle>();
+ArrayList<Line> lines = new ArrayList<Line>();
 
 ArrayList<String> trail;
 int index;
@@ -40,6 +41,13 @@ void draw() {
       b=0;
     }
     else if (c.isMoused() && c.text.equals(trail.get(index))) {
+      // draw a line from prev circle to current circle
+      if (index > 0) {
+        Circle prev = circles.get(index-1);
+        Circle cur = circles.get(index);
+        lines.add(new Line(prev.x, prev.y, cur.x, cur.y));
+      }
+
       index++;
       c.passed = true;
       r=0;
@@ -84,12 +92,17 @@ void draw() {
     }
     c.draw(r,g,b);
   }
+
+  for (Line l : lines) {
+    l.draw();
+  }
 }
 
 void generateCirclesTrail(ArrayList<String> trail) {
   ArrayList<String> texts = (ArrayList<String>)trail.clone();
 
   circles.clear();
+  lines.clear();
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
     Circle c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex));
