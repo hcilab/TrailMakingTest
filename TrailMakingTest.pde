@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 ArrayList<Circle> circles = new ArrayList<Circle>();
 
@@ -20,6 +21,8 @@ void setup() {
   trailBIndex = 0;
 
   generateCirclesTrailA();
+  Collections.sort(circles, new TrailAComparator());
+  optimizePath();
 }
 
 
@@ -106,6 +109,40 @@ void generateCirclesTrailA() {
     circles.add(c);
     texts.remove(textIndex);
   }
+}
+
+void optimizePath() {
+  for (int i=0; i<circles.size()-1; i++) {
+    Circle cur = circles.get(i);
+    Circle next = circles.get(i+1);
+    Circle closestNeighbour = findClosestRemainingNeighbour(cur);
+    if (next != closestNeighbour) {
+      swapPositions(next, closestNeighbour);
+    }
+  }
+}
+
+Circle findClosestRemainingNeighbour(Circle c) {
+  int index = circles.indexOf(c);
+  assert (index < circles.size());
+
+  Circle closestNeighbour = circles.get(index+1);
+  for (int i = index+2; i<circles.size(); i++) {
+    Circle candidate = circles.get(i);
+    if (c.getDistanceTo(candidate) < c.getDistanceTo(closestNeighbour)) {
+      closestNeighbour = candidate;
+    }
+  }
+  return closestNeighbour;
+}
+
+void swapPositions(Circle c, Circle d) {
+  int tmpX = c.x;
+  int tmpY = c.y;
+  c.x = d.x;
+  c.y = d.y;
+  d.x = tmpX;
+  d.y = tmpY;
 }
 
 ArrayList<String> generateTrailA() {

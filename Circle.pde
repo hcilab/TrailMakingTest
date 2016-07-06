@@ -24,4 +24,10 @@ class Circle {
     int relativeY = mouseY - y;
     return sqrt(relativeX*relativeX + relativeY*relativeY) < RADIUS;
   }
+
+  public float getDistanceTo(Circle c) {
+    int xComponent = abs(x - c.x);
+    int yComponent = abs(y - c.y);
+    return sqrt(xComponent*xComponent + yComponent*yComponent);
+  }
 }
