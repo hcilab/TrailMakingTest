@@ -6,6 +6,9 @@ ArrayList<Circle> circles = new ArrayList<Circle>();
 ArrayList<String> trail;
 int index;
 
+long startTime;
+long stopTime;
+
 void setup() {
   fullScreen();
   ellipseMode(CENTER);
@@ -36,6 +39,13 @@ void draw() {
       r=0;
       g=255;
       b=0;
+
+      if (index == 1) {
+        startTime = System.currentTimeMillis();
+      } else if (index == 25) {
+        stopTime = System.currentTimeMillis();
+        println("Test Run: " + (stopTime-startTime)/1000.0 + " seconds.");
+      }
 
       if (c.text.equals("25")) {
         index = 0;
