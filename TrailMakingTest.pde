@@ -3,10 +3,8 @@ import java.util.Collections;
 
 ArrayList<Circle> circles = new ArrayList<Circle>();
 
-ArrayList<String> trailA;
-ArrayList<String> trailB;
-int trailAIndex;
-int trailBIndex;
+ArrayList<String> trail;
+int index;
 
 void setup() {
   fullScreen();
@@ -15,12 +13,9 @@ void setup() {
   textAlign(CENTER, CENTER);
 
 
-  trailA = generateTrailA();
-  trailB = generateTrailB();
-  trailAIndex = 0;
-  trailBIndex = 0;
-
-  generateCirclesTrailA();
+  index = 0;
+  trail = generateTrailA();
+  generateCirclesTrail(trail);
   Collections.sort(circles, new TrailAComparator());
   optimizePath();
 }
@@ -35,12 +30,20 @@ void draw() {
       g=255;
       b=0;
     }
-    else if (c.isMoused() && c.text.equals(trailA.get(trailAIndex))) {
-      trailAIndex++;
+    else if (c.isMoused() && c.text.equals(trail.get(index))) {
+      index++;
       c.passed = true;
       r=0;
       g=255;
       b=0;
+
+      if (c.text.equals("25")) {
+        index = 0;
+        trail = generateTrailB();
+        generateCirclesTrail(trail);
+        Collections.sort(circles, new TrailBComparator());
+        optimizePath();
+      }
     }
     else if (c.isMoused()) {
       r=255;
@@ -56,9 +59,10 @@ void draw() {
   }
 }
 
-void generateCirclesTrailA() {
-  ArrayList<String> texts = (ArrayList<String>)trailA.clone();
+void generateCirclesTrail(ArrayList<String> trail) {
+  ArrayList<String> texts = (ArrayList<String>)trail.clone();
 
+  circles.clear();
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
     Circle c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex));
