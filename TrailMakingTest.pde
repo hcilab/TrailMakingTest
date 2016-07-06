@@ -66,6 +66,8 @@ void draw() {
     else if (c.isMoused()) {
       if (!errorLogged) {
         errors++;
+        String expectedTarget = trail.get(index);
+        String acquiredTarget = c.text;
         errorLogged = true;
         errorLoggedFor = c.text;
       }
