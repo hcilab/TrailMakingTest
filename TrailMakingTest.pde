@@ -46,6 +46,9 @@ void draw() {
         Circle prev = circles.get(index-1);
         Circle cur = circles.get(index);
         lines.add(new Line(prev.x, prev.y, cur.x, cur.y));
+        while (lines.size() > 2) {
+          lines.remove(0);
+        }
       }
 
       index++;
