@@ -8,6 +8,9 @@ int index;
 
 long startTime;
 long stopTime;
+int errors;
+boolean errorLogged;
+String errorLoggedFor;
 
 void setup() {
   fullScreen();
@@ -17,6 +20,9 @@ void setup() {
 
 
   index = 0;
+  errors = 0;
+  errorLogged = false;
+  errorLoggedFor = "NULL";
   trail = generateTrailA();
   generateCirclesTrail(trail);
   Collections.sort(circles, new TrailAComparator());
@@ -42,13 +48,15 @@ void draw() {
 
       if (index == 1) {
         startTime = System.currentTimeMillis();
+        errors = 0;
       } else if (index == 25) {
         stopTime = System.currentTimeMillis();
-        println("Test Run: " + (stopTime-startTime)/1000.0 + " seconds.");
+        println("Test Run: " + (stopTime-startTime)/1000.0 + " seconds (" + errors + " errors).");
       }
 
       if (c.text.equals("25")) {
         index = 0;
+        errors = 0;
         trail = generateTrailB();
         generateCirclesTrail(trail);
         Collections.sort(circles, new TrailBComparator());
@@ -56,11 +64,20 @@ void draw() {
       }
     }
     else if (c.isMoused()) {
+      if (!errorLogged) {
+        errors++;
+        errorLogged = true;
+        errorLoggedFor = c.text;
+      }
       r=255;
       g=0;
       b=0;
     }
     else {
+      if (c.text.equals(errorLoggedFor)) {
+        errorLogged = false;
+        errorLoggedFor = "NULL";
+      }
       r=255;
       g=255;
       b=255;
