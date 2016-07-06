@@ -21,6 +21,11 @@ void setup() {
   textAlign(CENTER, CENTER);
   textSize(24);
 
+  // By explicitly setting the value of this seed, repeatable tests can be
+  // created.
+  long seedValue = System.currentTimeMillis();
+  randomSeed(seedValue);
+
   index = 0;
   errors = 0;
   errorLogged = false;
