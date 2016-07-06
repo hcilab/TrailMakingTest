@@ -33,7 +33,7 @@ void generateCirclesTrailA() {
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
     Circle c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex));
-    while (isTouching(c)){
+    while (isTouching(c) || !isInBounds(c)){
       c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex));
     }
     circles.add(c);
@@ -43,7 +43,7 @@ void generateCirclesTrailA() {
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
     Circle c = new Circle((int)random(width/2, width), (int) random(0, height/2), texts.get(textIndex));
-    while (isTouching(c)) {
+    while (isTouching(c) || !isInBounds(c)) {
       c = new Circle((int)random(width/2, width), (int) random(0, height/2), texts.get(textIndex));
     }
     circles.add(c);
@@ -53,7 +53,7 @@ void generateCirclesTrailA() {
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
     Circle c = new Circle((int)random(0, width/2), (int)random(height/2, height), texts.get(textIndex));
-    while (isTouching(c)) {
+    while (isTouching(c) || !isInBounds(c)) {
       c = new Circle((int)random(0, width/2), (int)random(height/2, height), texts.get(textIndex));
     }
     circles.add(c);
@@ -63,7 +63,7 @@ void generateCirclesTrailA() {
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
     Circle c = new Circle((int)random(width/2, width), (int)random(height/2, height), texts.get(textIndex));
-    while (isTouching(c)) {
+    while (isTouching(c) || !isInBounds(c)) {
       c = new Circle((int)random(width/2, width), (int)random(height/2, height), texts.get(textIndex));
     }
     circles.add(c);
@@ -74,7 +74,7 @@ void generateCirclesTrailA() {
   for (int i=0; i<circlesLeft; i++) {
     int textIndex = (int)random(texts.size());
     Circle c = new Circle((int)random(0, width), (int)random(0, height), texts.get(textIndex));
-    while (isTouching(c)) {
+    while (isTouching(c) || !isInBounds(c)) {
       c = new Circle((int)random(0, width), (int)random(0, height), texts.get(textIndex));
     }
     circles.add(c);
@@ -114,4 +114,12 @@ boolean isTouching(Circle c) {
     }
   }
   return touching;
+}
+
+boolean isInBounds(Circle c) {
+  boolean inBounds = false;
+  if (c.x > 40 && c.x < width-40 && c.y > 40 && c.y < height-40) {
+    inBounds = true;
+  }
+  return inBounds;
 }
