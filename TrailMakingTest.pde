@@ -4,6 +4,8 @@ ArrayList<Circle> circles = new ArrayList<Circle>();
 
 ArrayList<String> trailA;
 ArrayList<String> trailB;
+int trailAIndex;
+int trailBIndex;
 
 void setup() {
   fullScreen();
@@ -14,6 +16,8 @@ void setup() {
 
   trailA = generateTrailA();
   trailB = generateTrailB();
+  trailAIndex = 0;
+  trailBIndex = 0;
 
   generateCirclesTrailA();
 }
@@ -21,9 +25,31 @@ void setup() {
 
 void draw() {
   background(255);
-
+  int r,g,b;
   for (Circle c : circles) {
-    c.draw();
+    if (c.passed) {
+      r=0;
+      g=255;
+      b=0;
+    }
+    else if (c.isMoused() && c.text.equals(trailA.get(trailAIndex))) {
+      trailAIndex++;
+      c.passed = true;
+      r=0;
+      g=255;
+      b=0;
+    }
+    else if (c.isMoused()) {
+      r=255;
+      g=0;
+      b=0;
+    }
+    else {
+      r=255;
+      g=255;
+      b=255;
+    }
+    c.draw(r,g,b);
   }
 }
 
