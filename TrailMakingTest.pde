@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 ArrayList<Circle> circles = new ArrayList<Circle>();
 ArrayList<Line> previousLines = new ArrayList<Line>();
@@ -14,6 +15,18 @@ int errors;
 boolean errorLogged;
 String errorLoggedFor;
 boolean returnToPrevious;
+
+boolean isTrialA;
+Date timeOfDay;
+long timeOfTrial;
+float averageTargets;
+float standardDeviation;
+
+Table tableResults;
+TableRow resultsNewRow;
+Table tableError;
+TableRow errorNewRow;
+Table tableRawData;
 
 void setup() {
   fullScreen();
@@ -36,6 +49,13 @@ void setup() {
   Collections.sort(circles, new TrailAComparator());
   optimizePath();
   returnToPrevious = false;
+  
+  generateTables();
+  resultsNewRow = tableResults.addRow(); 
+  errorNewRow = tableError.addRow();
+  isTrialA = true;
+  addCommonValuesToTableStart();
+
 }
 
 
@@ -75,12 +95,18 @@ void draw() {
       } else if (index == 25) {
         stopTime = System.currentTimeMillis();
         println("Test Run: " + (stopTime-startTime)/1000.0 + " seconds (" + errors + " errors).");
+        timeOfTrial = (stopTime-startTime)/1000;
+        if(isTrialA)
+          logTrialResults("Trial A ");
+        else
+          logTrialResults("Trial B ");
       }
 
       if (c.text.equals("25")) {
         index = 0;
         errors = 0;
         trail = generateTrailB();
+        isTrialA = false;
         generateCirclesTrail(trail);
         Collections.sort(circles, new TrailBComparator());
         optimizePath();
@@ -256,4 +282,42 @@ boolean isInBounds(Circle c) {
     inBounds = true;
   }
   return inBounds;
+}
+
+void generateTables(){
+  tableResults  = new Table();
+  tableResults.addColumn("tod");
+  tableResults.addColumn("username");
+  tableResults.addColumn("seed");
+  tableResults.addColumn("Trial A Time");
+  tableResults.addColumn("Trial A Errors");
+  tableResults.addColumn("Trial A Average Time Between Targets");
+  tableResults.addColumn("Trial A Standard Devation Between Targets");
+  tableResults.addColumn("Trial B Time");
+  tableResults.addColumn("Trial B Errors");
+  tableResults.addColumn("Trial B Average Time Between Targets");
+  tableResults.addColumn("Trial B Standard Devation Between Targets");
+  
+  tableError = new Table();
+  tableResults.addColumn("tod");
+  tableResults.addColumn("username");
+  
+  tableRawData = new Table();
+}
+
+void addCommonValuesToTableStart(){
+  timeOfDay = new Date();
+  resultsNewRow.setLong("tod", timeOfDay.getTime());
+  resultsNewRow.setString("username", "Username");
+  
+  resultsNewRow.setLong("tod", timeOfDay.getTime());
+  resultsNewRow.setString("username", "Username");
+  
+}
+
+void logTrialResults(String trial){
+  resultsNewRow.setFloat(trial + "Time", timeOfTrial);
+  resultsNewRow.setFloat(trial + "Errors", errors);
+  resultsNewRow.setFloat(trial + "Average Time Between Targets", 0);
+  resultsNewRow.setFloat(trial + "Standard Devation Between Targets", 0);
 }
