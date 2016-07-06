@@ -13,6 +13,7 @@ long stopTime;
 int errors;
 boolean errorLogged;
 String errorLoggedFor;
+boolean returnToPrevious;
 
 void setup() {
   fullScreen();
@@ -34,6 +35,7 @@ void setup() {
   generateCirclesTrail(trail);
   Collections.sort(circles, new TrailAComparator());
   optimizePath();
+  returnToPrevious = false;
 }
 
 
@@ -41,19 +43,26 @@ void draw() {
   background(255);
   int r,g,b;
   for (Circle c : circles) {
-    if (c.passed) {
+    if (c.passed && c.isMoused() && returnToPrevious) {
+      if (c.text.equals(circles.get(index-1).text)) {
+        returnToPrevious = false;
+      }
       r=0;
       g=255;
       b=0;
     }
-    else if (c.isMoused() && c.text.equals(trail.get(index))) {
+    else if (c.passed) {
+      r=0;
+      g=255;
+      b=0;
+    }
+    else if (c.isMoused() && c.text.equals(trail.get(index)) && !returnToPrevious) {
       currentLines.clear();
       if (index>0) {
         Circle prev = circles.get(index-1);
         Circle cur = circles.get(index);
         previousLines.add(new Line(prev.x, prev.y, cur.x, cur.y));
       }
-
       index++;
       c.passed = true;
       r=0;
@@ -84,6 +93,9 @@ void draw() {
         String acquiredTarget = c.text;
         errorLogged = true;
         errorLoggedFor = c.text;
+        if (index > 0) {
+          returnToPrevious = true;
+        }
       }
       r=255;
       g=0;
