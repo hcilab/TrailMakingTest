@@ -2,7 +2,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 ArrayList<Circle> circles = new ArrayList<Circle>();
-ArrayList<Line> lines = new ArrayList<Line>();
+ArrayList<Line> previousLines = new ArrayList<Line>();
+ArrayList<Line> currentLines = new ArrayList<Line>();
 
 ArrayList<String> trail;
 int index;
@@ -41,6 +42,13 @@ void draw() {
       b=0;
     }
     else if (c.isMoused() && c.text.equals(trail.get(index))) {
+      currentLines.clear();
+      if (index>0) {
+        Circle prev = circles.get(index-1);
+        Circle cur = circles.get(index);
+        previousLines.add(new Line(prev.x, prev.y, cur.x, cur.y));
+      }
+
       index++;
       c.passed = true;
       r=0;
@@ -88,17 +96,23 @@ void draw() {
     c.draw(r,g,b);
   }
 
-  lines.add(new Line(pmouseX, pmouseY, mouseX, mouseY));
-  for (Line l : lines) {
-    l.draw();
+  currentLines.add(new Line(pmouseX, pmouseY, mouseX, mouseY));
+  
+  for (Line l : currentLines) {
+    l.draw(0, 0, 0);
   }
+  for (Line l : previousLines) {
+    l.draw(169, 169, 169);
+  }
+
 }
 
 void generateCirclesTrail(ArrayList<String> trail) {
   ArrayList<String> texts = (ArrayList<String>)trail.clone();
 
   circles.clear();
-  lines.clear();
+  previousLines.clear();
+  currentLines.clear();
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
     Circle c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex));

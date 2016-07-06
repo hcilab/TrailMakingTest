@@ -11,7 +11,8 @@ class Line {
     this.endy = endy;
   }
 
-  public void draw() {
+  public void draw(int r, int g, int b) {
+    stroke(r,g,b);
     line(startx, starty, endx, endy);
   }
 }
