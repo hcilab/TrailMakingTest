@@ -100,10 +100,12 @@ void draw() {
         stopTime = System.currentTimeMillis();
         println("Test Run: " + (stopTime-startTime)/1000.0 + " seconds (" + errors + " errors).");
         timeOfTrial = (stopTime-startTime)/1000;
-        if(isTrialA)
+        if(isTrialA) {
           logTrialResults("Trial A ");
-        else
-          logTrialResults("Trial B ");
+        }
+        else {
+          beforeExit();
+        }
       }
 
       if (c.text.equals("25")) {
@@ -327,4 +329,9 @@ void logTrialResults(String trial){
   resultsNewRow.setFloat(trial + "Errors", errors);
   resultsNewRow.setFloat(trial + "Average Time Between Targets", 0);
   resultsNewRow.setFloat(trial + "Standard Devation Between Targets", 0);
+}
+
+void beforeExit() {
+  logTrialResults("Trial B ");
+  exit();
 }
