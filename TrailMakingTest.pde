@@ -23,6 +23,7 @@ Date timeOfDay;
 long timeOfTrial;
 float averageTargets;
 float standardDeviation;
+long seedValue;
 
 Table tableResults;
 TableRow resultsNewRow;
@@ -43,7 +44,7 @@ void setup() {
 
   // By explicitly setting the value of this seed, repeatable tests can be
   // created.
-  long seedValue = System.currentTimeMillis();
+  seedValue = System.currentTimeMillis();
   randomSeed(seedValue);
 
   radius = adjustTargetSize();
@@ -327,6 +328,7 @@ void addCommonValuesToTableStart(){
   timeOfDay = new Date();
   resultsNewRow.setLong("tod", timeOfDay.getTime());
   resultsNewRow.setString("username", "Username");
+  resultsNewRow.setLong("seed", seedValue);
   
   resultsNewRow.setLong("tod", timeOfDay.getTime());
   resultsNewRow.setString("username", "Username");
@@ -340,6 +342,10 @@ void logTrialResults(String trial){
   resultsNewRow.setFloat(trial + "Standard Devation Between Targets", 0);
 }
 
+void saveTables(){
+  
+  
+}
 void beforeExit() {
   logTrialResults("Trial B ");
   exit();
