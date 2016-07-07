@@ -39,10 +39,11 @@ PFont font;
 int fontSize = 30;
 int bottomBarHeight = fontSize;
 
-boolean ERROR_OCCURED;
-String errorMessage;
-
 void setup() {
+  username = loadUsername();
+  seedValue = loadRandomSeed();
+  randomSeed(seedValue);
+
   fullScreen();
   ellipseMode(CENTER);
   shapeMode(CENTER);
@@ -50,11 +51,6 @@ void setup() {
 
   font = createFont("Helvetica", fontSize);
   textFont(font);
-
-  // By explicitly setting the value of this seed, repeatable tests can be
-  // created.
-  seedValue = System.currentTimeMillis();
-  randomSeed(seedValue);
 
   radius = adjustTargetSize();
 
@@ -74,23 +70,11 @@ void setup() {
   isTrialA = true;
   addCommonValuesToTableStart();
 
-  ERROR_OCCURED = false;
-  errorMessage = "";
-  username = loadSetting("username.txt");
-  if (username == null) {
-    username = "";
-  }
 }
 
 void draw() {
   background(255);
   textAlign(CENTER,CENTER);
-
-  if (ERROR_OCCURED) {
-    fill(0);
-    text(errorMessage, width/2, height/2);
-    return;
-  }
 
   int r,g,b;
   for (Circle c : circles) {
@@ -472,21 +456,60 @@ int adjustTargetSize() {
   return radius;
 }
 
-String loadSetting(String filename) {
+/*
+ * Always return something meaningful, so that test run will never be inhibited.
+ * Returns:
+ *   - "" when 'username.txt' does not exist
+ *   - "" when load fails
+ *   - contents of 'username.txt' otherwise
+ */
+String loadUsername() {
+  String filename = "username.txt";
+  String defaultValue = "";
+
   if (!fileExists(filename)) {
-    ERROR_OCCURED = true;
-    errorMessage = "Could not find file named: '" + filename + "'.";
-    return null;
+    return defaultValue;
   }
 
   BufferedReader r = createReader(filename);
-  String setting = null;
+  String username = "";
   try {
-    setting = r.readLine();
+    username = r.readLine();
   } catch (Exception e) {
-    ERROR_OCCURED = true;
-    errorMessage = "Error occured while loading setting from: '" + filename + "'.";
-    return null;
+    return defaultValue;
   }
-  return setting;
+  return username;
+}
+
+/*
+ * Always return something meaningful, so that test run will never be inhibited.
+ * Returns:
+ *   - currentTime when 'randomSeed.txt' does not exist
+ *   - currentTime when load fails
+ *   - currentTime when invalid integer format in 'randomSeed.txt'
+ *   - contents of 'randomSeed.txt' otherwise
+ */
+long loadRandomSeed() {
+  String filename = "randomSeed.txt";
+  long defaultValue = System.currentTimeMillis();
+
+  if (!fileExists(filename)) {
+    return defaultValue;
+  }
+
+  BufferedReader r = createReader(filename);
+  String seedString = "";
+  try {
+    seedString = r.readLine();
+  } catch (Exception e) {
+    return defaultValue;
+  }
+
+  long seed = defaultValue;
+  try {
+    seed = Integer.parseInt(seedString);
+  } catch (Exception e) {
+    return defaultValue;
+  }
+  return seed;
 }
