@@ -29,12 +29,16 @@ Table tableError;
 TableRow errorNewRow;
 Table tableRawData;
 
+PFont font;
+
 void setup() {
   fullScreen();
   ellipseMode(CENTER);
   shapeMode(CENTER);
   textAlign(CENTER, CENTER);
-  textSize(24);
+
+  font = createFont("Helvetica", 30);
+  textFont(font);
 
   // By explicitly setting the value of this seed, repeatable tests can be
   // created.
