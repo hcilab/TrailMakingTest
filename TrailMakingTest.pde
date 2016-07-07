@@ -286,7 +286,7 @@ ArrayList<String> generateTrailB() {
 boolean isTouching(Circle c) {
   boolean touching = false;
   for (Circle curr : circles) {
-    if ( sqrt(pow(abs(curr.x - c.x),2.0) + pow((abs(curr.y - c.y)), 2.0)) < 80) {
+    if (sqrt(pow(abs(curr.x - c.x),2.0) + pow((abs(curr.y - c.y)), 2.0)) < radius*2) {
       touching = true;
       break;
     }
@@ -296,7 +296,7 @@ boolean isTouching(Circle c) {
 
 boolean isInBounds(Circle c) {
   boolean inBounds = false;
-  if (c.x > 40 && c.x < width-40 && c.y > 40 && c.y < height-40) {
+  if (c.x > radius && c.x < width-radius && c.y > radius && c.y < height-radius) {
     inBounds = true;
   }
   return inBounds;
