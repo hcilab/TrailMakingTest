@@ -36,6 +36,9 @@ Table tableRawData;
 
 PFont font;
 
+boolean ERROR_OCCURED;
+String errorMessage;
+
 void setup() {
   fullScreen();
   ellipseMode(CENTER);
@@ -62,17 +65,26 @@ void setup() {
   optimizePath();
   returnToPrevious = false;
   drawCurrentLines = false;
-  username = "test";
   
   generateTables();
   resultsNewRow = tableResults.addRow(); 
   isTrialA = true;
   addCommonValuesToTableStart();
-}
 
+  ERROR_OCCURED = false;
+  errorMessage = "";
+  username = loadSetting("username.txt");
+}
 
 void draw() {
   background(255);
+  
+  if (ERROR_OCCURED) {
+    fill(0);
+    text(errorMessage, width/2, height/2);
+    return;
+  }
+
   int r,g,b;
   for (Circle c : circles) {
     if (c.passed && c.isMoused() && returnToPrevious) {
@@ -438,4 +450,23 @@ int adjustTargetSize() {
     radius = Math.round(width/22.5);
   }
   return radius;
+}
+
+String loadSetting(String filename) {
+  if (!fileExists(filename)) {
+    ERROR_OCCURED = true;
+    errorMessage = "Could not find file named: '" + filename + "'.";
+    return null;
+  }
+
+  BufferedReader r = createReader(filename);
+  String setting = null;
+  try {
+    setting = r.readLine();
+  } catch (Exception e) {
+    ERROR_OCCURED = true;
+    errorMessage = "Error occured while loading setting from: '" + filename + "'.";
+    return null;
+  }
+  return setting;
 }
