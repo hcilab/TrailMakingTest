@@ -29,7 +29,7 @@ String username;
 long prevTargetTime;
 long CurrentTargetTime;
 int trialNumber;
-long[] targetTimes;
+float[] targetTimes;
 
 Table tableResults;
 TableRow resultsNewRow;
@@ -65,14 +65,10 @@ void setup() {
   optimizePath();
   returnToPrevious = false;
   drawCurrentLines = false;
-<<<<<<< 2405bb2af2377c1b64b4d84a7821658ddee421f0
-=======
-  username = "test";
-  targetTimes = new long[24];
->>>>>>> tod is fixed and targetTimes added
+  targetTimes = new float[24];
   
   generateTables();
-  resultsNewRow = tableResults.addRow(); 
+  resultsNewRow = tableResults.addRow();
   isTrialA = true;
   addCommonValuesToTableStart();
 
@@ -114,7 +110,7 @@ void draw() {
       b=0;
       if(index > 1){
         CurrentTargetTime = System.currentTimeMillis();
-        targetTimes[index-2] = (CurrentTargetTime - prevTargetTime);
+        targetTimes[index-2] = ((CurrentTargetTime - prevTargetTime)/1000.0);
         averageTargets += (CurrentTargetTime - prevTargetTime);
         prevTargetTime = CurrentTargetTime;
       }
@@ -131,6 +127,7 @@ void draw() {
         timeOfTrial = (stopTime-startTime)/1000.0;
         if(isTrialA) {
           logTrialResults("Trial A ");
+          logRawDataResults("A");
         }
         else {
           beforeExit();
@@ -366,40 +363,23 @@ void generateTables(){
     tableError.addColumn("Expected Target");
     tableError.addColumn("Acquired Target");
   }
-  
-  tableRawData = new Table();
-  tableRawData.addColumn("Trial #");
-  tableRawData.addColumn("1");
-  tableRawData.addColumn("2");
-  tableRawData.addColumn("3");
-  tableRawData.addColumn("4");
-  tableRawData.addColumn("5");
-  tableRawData.addColumn("6");
-  tableRawData.addColumn("7");
-  tableRawData.addColumn("8");
-  tableRawData.addColumn("9");
-  tableRawData.addColumn("10");
-  tableRawData.addColumn("11");
-  tableRawData.addColumn("12");
-  tableRawData.addColumn("13");
-  tableRawData.addColumn("14");
-  tableRawData.addColumn("15");
-  tableRawData.addColumn("16");
-  tableRawData.addColumn("17");
-  tableRawData.addColumn("18");
-  tableRawData.addColumn("19");
-  tableRawData.addColumn("20");
-  tableRawData.addColumn("21");
-  tableRawData.addColumn("22");
-  tableRawData.addColumn("23");
-  tableRawData.addColumn("24");
-  tableRawData.addColumn("25");
+   if(fileExists("rawData/rawData_" + username +".csv")){
+    tableRawData = loadTable("rawData/rawData_" + username +".csv", "header");
+  }
+  else{
+    tableRawData = new Table();
+    tableRawData.addColumn("Type");
+    tableRawData.addColumn("Trial #");
+    for(int i = 1; i < 25;i++){
+      tableRawData.addColumn("Time " + i);
+    }
+  }
 }
 
 void addCommonValuesToTableStart(){
   timeOfDay = new Date();
   resultsNewRow.setLong("tod", System.currentTimeMillis());
-  resultsNewRow.setString("username", "Username");
+  resultsNewRow.setString("username", username);
   resultsNewRow.setLong("seed", seedValue);
   trialNumber = tableResults.getRowCount();
   resultsNewRow.setInt("Trial #", trialNumber);
@@ -413,24 +393,37 @@ void logTrialResults(String trial){
   resultsNewRow.setFloat(trial + "Standard Devation Between Targets", calcStandardDev(averageTargets, targetTimes));
 }
 
-void saveTables(){  
-  saveTable(tableResults, "results/results_" + username +".csv");
-  saveTable(tableError, "error/error_" + username +".csv");
-  saveTable(tableRawData, "rawData/rawData_" + username +".csv");
+void logRawDataResults(String type){
+  TableRow rawDataNewRow = tableRawData.addRow();
+  rawDataNewRow.setString("Type", type);
+  rawDataNewRow.setInt("Trial #", trialNumber);
+  for(int i = 1; i < 25;i++){
+    rawDataNewRow.setFloat("Time " + i, targetTimes[i-1]);
+  }
 }
 
 void addRowError(String expTarget, String acqTarget){
   TableRow errorNewRow = tableError.addRow();
   errorNewRow.setLong("tod", System.currentTimeMillis());
-  errorNewRow.setString("username", "Username");
+  errorNewRow.setString("username", username);
   errorNewRow.setInt("Trial #", trialNumber);
   errorNewRow.setString("Expected Target", expTarget);
   errorNewRow.setString("Acquired Target", acqTarget);
 }
 
-float calcStandardDev(float mean, long[] targTimes){
-  
-  return 99;
+float calcStandardDev(float mean, float[] targTimes){
+  float sumOfSquares = 0;
+  for(int i = 0;i < targTimes.length; i++){
+    sumOfSquares += pow(targTimes[i] - mean, 2);
+  }
+  float div = (sumOfSquares/24);
+  return sqrt(div);
+}
+
+void saveTables(){  
+  saveTable(tableResults, "results/results_" + username +".csv");
+  saveTable(tableError, "error/error_" + username +".csv");
+  saveTable(tableRawData, "rawData/rawData_" + username +".csv");
 }
 
 boolean fileExists(String filename) {
@@ -444,6 +437,7 @@ boolean fileExists(String filename) {
 
 void beforeExit() {
   logTrialResults("Trial B ");
+  logRawDataResults("B");
   saveTables();
   exit();
 }
