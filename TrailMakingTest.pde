@@ -101,6 +101,8 @@ void draw() {
         startTime = System.currentTimeMillis();
         errors = 0;
       } else if (index == 25) {
+        drawCurrentLines = false;
+        currentLines.clear();
         stopTime = System.currentTimeMillis();
         println("Test Run: " + (stopTime-startTime)/1000.0 + " seconds (" + errors + " errors).");
         timeOfTrial = (stopTime-startTime)/1000;
