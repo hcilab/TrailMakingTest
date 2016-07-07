@@ -77,11 +77,15 @@ void setup() {
   ERROR_OCCURED = false;
   errorMessage = "";
   username = loadSetting("username.txt");
+  if (username == null) {
+    username = "";
+  }
 }
 
 void draw() {
   background(255);
-  
+  textAlign(CENTER,CENTER);
+
   if (ERROR_OCCURED) {
     fill(0);
     text(errorMessage, width/2, height/2);
@@ -199,6 +203,11 @@ void draw() {
   }
 
   text(runningTime, width/2, height-(fontSize/2));
+  textAlign(LEFT, CENTER);
+  if (username.equals("")) {
+    fill(255,0,0);
+  }
+  text("Username: " + username, 0, height-(fontSize/2));
 }
 
 void generateCirclesTrail(ArrayList<String> trail) {
