@@ -335,3 +335,10 @@ void beforeExit() {
   logTrialResults("Trial B ");
   exit();
 }
+
+void keyPressed() {
+  if (key == ESC) {
+    key = 0; // override so that signal is not propogated on to kill window
+    return;
+  }
+}
