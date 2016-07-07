@@ -12,6 +12,7 @@ int radius;
 
 long startTime;
 long stopTime;
+float runningTime;
 int errors;
 boolean errorLogged;
 String errorLoggedFor;
@@ -35,6 +36,8 @@ Table tableError;
 Table tableRawData;
 
 PFont font;
+int fontSize = 30;
+int bottomBarHeight = fontSize;
 
 boolean ERROR_OCCURED;
 String errorMessage;
@@ -45,7 +48,7 @@ void setup() {
   shapeMode(CENTER);
   textAlign(CENTER, CENTER);
 
-  font = createFont("Helvetica", 30);
+  font = createFont("Helvetica", fontSize);
   textFont(font);
 
   // By explicitly setting the value of this seed, repeatable tests can be
@@ -188,6 +191,14 @@ void draw() {
     l.draw(169, 169, 169);
   }
 
+  if (index < 1) {
+    runningTime = 0;
+  }
+  else {
+    runningTime = ((System.currentTimeMillis()-startTime)/1000.0);
+  }
+
+  text(runningTime, width/2, height-(fontSize/2));
 }
 
 void generateCirclesTrail(ArrayList<String> trail) {
@@ -318,7 +329,7 @@ boolean isTouching(Circle c) {
 
 boolean isInBounds(Circle c) {
   boolean inBounds = false;
-  if (c.x > radius && c.x < width-radius && c.y > radius && c.y < height-radius) {
+  if (c.x > radius && c.x < width-radius && c.y > radius && c.y < height-radius-bottomBarHeight) {
     inBounds = true;
   }
   return inBounds;
