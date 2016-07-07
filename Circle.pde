@@ -14,6 +14,7 @@ class Circle {
 
   public void draw(int r, int g, int b) {
     stroke(0,0,0);
+    strokeWeight(1);
     fill(r,g,b); // white circle
     ellipse(x, y, RADIUS*2, RADIUS*2);
     fill(0); // black text
