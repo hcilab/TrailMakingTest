@@ -20,16 +20,20 @@ boolean returnToPrevious;
 boolean drawCurrentLines;
 
 boolean isTrialA;
-Date timeOfDay;
 float timeOfTrial;
 float averageTargets;
 float standardDeviation;
 long seedValue;
 String username;
+String type;
 long prevTargetTime;
 long CurrentTargetTime;
+int currErrorCount;
+int prevErrorCount;
+
 int trialNumber;
 float[] targetTimes;
+int[] targetErrors;
 
 Table tableResults;
 TableRow resultsNewRow;
@@ -66,12 +70,13 @@ void setup() {
   returnToPrevious = false;
   drawCurrentLines = false;
   targetTimes = new float[24];
+  targetErrors = new int[24];
   
   generateTables();
   resultsNewRow = tableResults.addRow();
   isTrialA = true;
   addCommonValuesToTableStart();
-
+  type = "A";
 }
 
 void draw() {
@@ -113,11 +118,15 @@ void draw() {
         targetTimes[index-2] = ((CurrentTargetTime - prevTargetTime)/1000.0);
         averageTargets += (CurrentTargetTime - prevTargetTime);
         prevTargetTime = CurrentTargetTime;
+        currErrorCount = errors;
+        targetErrors[index-2] = currErrorCount-prevErrorCount;
+        prevErrorCount = currErrorCount;
       }
 
       if (index == 1) {
         startTime = System.currentTimeMillis();
         prevTargetTime = startTime;
+        prevErrorCount = 0;
         errors = 0;
       } else if (index == 25) {
         drawCurrentLines = false;
@@ -127,7 +136,7 @@ void draw() {
         timeOfTrial = (stopTime-startTime)/1000.0;
         if(isTrialA) {
           logTrialResults("Trial A ");
-          logRawDataResults("A");
+          logRawDataResults();
         }
         else {
           beforeExit();
@@ -139,6 +148,7 @@ void draw() {
         errors = 0;
         trail = generateTrailB();
         isTrialA = false;
+         type = "B";
         generateCirclesTrail(trail);
         Collections.sort(circles, new TrailBComparator());
         optimizePath();
@@ -360,6 +370,7 @@ void generateTables(){
     tableError.addColumn("tod");
     tableError.addColumn("username");
     tableError.addColumn("Trial #");
+    tableError.addColumn("Type");
     tableError.addColumn("Expected Target");
     tableError.addColumn("Acquired Target");
   }
@@ -368,16 +379,18 @@ void generateTables(){
   }
   else{
     tableRawData = new Table();
-    tableRawData.addColumn("Type");
     tableRawData.addColumn("Trial #");
+    tableRawData.addColumn("Type");
     for(int i = 1; i < 25;i++){
       tableRawData.addColumn("Time " + i);
+    }
+    for(int i = 1; i < 25;i++){
+      tableRawData.addColumn("Error " + i);
     }
   }
 }
 
 void addCommonValuesToTableStart(){
-  timeOfDay = new Date();
   resultsNewRow.setLong("tod", System.currentTimeMillis());
   resultsNewRow.setString("username", username);
   resultsNewRow.setLong("seed", seedValue);
@@ -393,12 +406,13 @@ void logTrialResults(String trial){
   resultsNewRow.setFloat(trial + "Standard Devation Between Targets", calcStandardDev(averageTargets, targetTimes));
 }
 
-void logRawDataResults(String type){
+void logRawDataResults(){
   TableRow rawDataNewRow = tableRawData.addRow();
   rawDataNewRow.setString("Type", type);
   rawDataNewRow.setInt("Trial #", trialNumber);
   for(int i = 1; i < 25;i++){
     rawDataNewRow.setFloat("Time " + i, targetTimes[i-1]);
+    rawDataNewRow.setFloat("Error " + i, targetErrors[i-1]);
   }
 }
 
@@ -407,6 +421,7 @@ void addRowError(String expTarget, String acqTarget){
   errorNewRow.setLong("tod", System.currentTimeMillis());
   errorNewRow.setString("username", username);
   errorNewRow.setInt("Trial #", trialNumber);
+  errorNewRow.setString("Type", type);
   errorNewRow.setString("Expected Target", expTarget);
   errorNewRow.setString("Acquired Target", acqTarget);
 }
@@ -437,7 +452,7 @@ boolean fileExists(String filename) {
 
 void beforeExit() {
   logTrialResults("Trial B ");
-  logRawDataResults("B");
+  logRawDataResults();
   saveTables();
   exit();
 }
