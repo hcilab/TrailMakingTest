@@ -29,6 +29,7 @@ String username;
 long prevTargetTime;
 long CurrentTargetTime;
 int trialNumber;
+long[] targetTimes;
 
 Table tableResults;
 TableRow resultsNewRow;
@@ -64,6 +65,11 @@ void setup() {
   optimizePath();
   returnToPrevious = false;
   drawCurrentLines = false;
+<<<<<<< 2405bb2af2377c1b64b4d84a7821658ddee421f0
+=======
+  username = "test";
+  targetTimes = new long[24];
+>>>>>>> tod is fixed and targetTimes added
   
   generateTables();
   resultsNewRow = tableResults.addRow(); 
@@ -108,6 +114,7 @@ void draw() {
       b=0;
       if(index > 1){
         CurrentTargetTime = System.currentTimeMillis();
+        targetTimes[index-2] = (CurrentTargetTime - prevTargetTime);
         averageTargets += (CurrentTargetTime - prevTargetTime);
         prevTargetTime = CurrentTargetTime;
       }
@@ -120,7 +127,6 @@ void draw() {
         drawCurrentLines = false;
         currentLines.clear();
         stopTime = System.currentTimeMillis();
-        println("stopTime: " + stopTime + "startTime :" + startTime); 
         println("Test Run: " + (stopTime-startTime)/1000.0 + " seconds (" + errors + " errors).");
         timeOfTrial = (stopTime-startTime)/1000.0;
         if(isTrialA) {
@@ -388,12 +394,11 @@ void generateTables(){
   tableRawData.addColumn("23");
   tableRawData.addColumn("24");
   tableRawData.addColumn("25");
-  
 }
 
 void addCommonValuesToTableStart(){
   timeOfDay = new Date();
-  resultsNewRow.setLong("tod", timeOfDay.getTime());
+  resultsNewRow.setLong("tod", System.currentTimeMillis());
   resultsNewRow.setString("username", "Username");
   resultsNewRow.setLong("seed", seedValue);
   trialNumber = tableResults.getRowCount();
@@ -405,7 +410,7 @@ void logTrialResults(String trial){
   resultsNewRow.setFloat(trial + "Time", timeOfTrial);
   resultsNewRow.setFloat(trial + "Errors", errors);
   resultsNewRow.setFloat(trial + "Average Time Between Targets", averageTargets);
-  resultsNewRow.setFloat(trial + "Standard Devation Between Targets", 0);
+  resultsNewRow.setFloat(trial + "Standard Devation Between Targets", calcStandardDev(averageTargets, targetTimes));
 }
 
 void saveTables(){  
@@ -416,11 +421,16 @@ void saveTables(){
 
 void addRowError(String expTarget, String acqTarget){
   TableRow errorNewRow = tableError.addRow();
-  errorNewRow.setLong("tod", timeOfDay.getTime());
+  errorNewRow.setLong("tod", System.currentTimeMillis());
   errorNewRow.setString("username", "Username");
   errorNewRow.setInt("Trial #", trialNumber);
   errorNewRow.setString("Expected Target", expTarget);
   errorNewRow.setString("Acquired Target", acqTarget);
+}
+
+float calcStandardDev(float mean, long[] targTimes){
+  
+  return 99;
 }
 
 boolean fileExists(String filename) {
