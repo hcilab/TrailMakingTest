@@ -20,15 +20,18 @@ boolean drawCurrentLines;
 
 boolean isTrialA;
 Date timeOfDay;
-long timeOfTrial;
+float timeOfTrial;
 float averageTargets;
 float standardDeviation;
 long seedValue;
+String username;
+long prevTargetTime;
+long CurrentTargetTime;
+int trialNumber;
 
 Table tableResults;
 TableRow resultsNewRow;
 Table tableError;
-TableRow errorNewRow;
 Table tableRawData;
 
 PFont font;
@@ -59,10 +62,10 @@ void setup() {
   optimizePath();
   returnToPrevious = false;
   drawCurrentLines = false;
+  username = "test";
   
   generateTables();
   resultsNewRow = tableResults.addRow(); 
-  errorNewRow = tableError.addRow();
   isTrialA = true;
   addCommonValuesToTableStart();
 }
@@ -100,16 +103,23 @@ void draw() {
       r=0;
       g=255;
       b=0;
+      if(index > 1){
+        CurrentTargetTime = System.currentTimeMillis();
+        averageTargets += (CurrentTargetTime - prevTargetTime);
+        prevTargetTime = CurrentTargetTime;
+      }
 
       if (index == 1) {
         startTime = System.currentTimeMillis();
+        prevTargetTime = startTime;
         errors = 0;
       } else if (index == 25) {
         drawCurrentLines = false;
         currentLines.clear();
         stopTime = System.currentTimeMillis();
+        println("stopTime: " + stopTime + "startTime :" + startTime); 
         println("Test Run: " + (stopTime-startTime)/1000.0 + " seconds (" + errors + " errors).");
-        timeOfTrial = (stopTime-startTime)/1000;
+        timeOfTrial = (stopTime-startTime)/1000.0;
         if(isTrialA) {
           logTrialResults("Trial A ");
         }
@@ -129,17 +139,16 @@ void draw() {
       }
     }
     else if (c.isMoused()) {
-      if (!errorLogged) {
+      if (!errorLogged && index > 0) {
         errors++;
         String expectedTarget = trail.get(index);
         String acquiredTarget = c.text;
+        addRowError(expectedTarget, acquiredTarget);
         errorLogged = true;
         errorLoggedFor = c.text;
-        if (index > 0) {
-          returnToPrevious = true;
-          drawCurrentLines = false;
-          currentLines.clear();
-        }
+        returnToPrevious = true;
+        drawCurrentLines = false;
+        currentLines.clear();
       }
       r=255;
       g=0;
@@ -304,24 +313,66 @@ boolean isInBounds(Circle c) {
 }
 
 void generateTables(){
-  tableResults  = new Table();
-  tableResults.addColumn("tod");
-  tableResults.addColumn("username");
-  tableResults.addColumn("seed");
-  tableResults.addColumn("Trial A Time");
-  tableResults.addColumn("Trial A Errors");
-  tableResults.addColumn("Trial A Average Time Between Targets");
-  tableResults.addColumn("Trial A Standard Devation Between Targets");
-  tableResults.addColumn("Trial B Time");
-  tableResults.addColumn("Trial B Errors");
-  tableResults.addColumn("Trial B Average Time Between Targets");
-  tableResults.addColumn("Trial B Standard Devation Between Targets");
+
+  if(fileExists("results/results_" + username +".csv")){
+    tableResults = loadTable("results/results_" + username +".csv", "header");
+  }
+  else{
+    tableResults  = new Table();
+    tableResults.addColumn("tod");
+    tableResults.addColumn("username");
+    tableResults.addColumn("seed");
+    tableResults.addColumn("Trial #");
+    tableResults.addColumn("Trial A Time");
+    tableResults.addColumn("Trial A Errors");
+    tableResults.addColumn("Trial A Average Time Between Targets");
+    tableResults.addColumn("Trial A Standard Devation Between Targets");
+    tableResults.addColumn("Trial B Time");
+    tableResults.addColumn("Trial B Errors");
+    tableResults.addColumn("Trial B Average Time Between Targets");
+    tableResults.addColumn("Trial B Standard Devation Between Targets");
+  }
   
-  tableError = new Table();
-  tableResults.addColumn("tod");
-  tableResults.addColumn("username");
+  if(fileExists("error/error_" + username +".csv")){
+    tableError = loadTable("error/error_" + username +".csv", "header");
+  }
+  else{
+    tableError = new Table();
+    tableError.addColumn("tod");
+    tableError.addColumn("username");
+    tableError.addColumn("Trial #");
+    tableError.addColumn("Expected Target");
+    tableError.addColumn("Acquired Target");
+  }
   
   tableRawData = new Table();
+  tableRawData.addColumn("Trial #");
+  tableRawData.addColumn("1");
+  tableRawData.addColumn("2");
+  tableRawData.addColumn("3");
+  tableRawData.addColumn("4");
+  tableRawData.addColumn("5");
+  tableRawData.addColumn("6");
+  tableRawData.addColumn("7");
+  tableRawData.addColumn("8");
+  tableRawData.addColumn("9");
+  tableRawData.addColumn("10");
+  tableRawData.addColumn("11");
+  tableRawData.addColumn("12");
+  tableRawData.addColumn("13");
+  tableRawData.addColumn("14");
+  tableRawData.addColumn("15");
+  tableRawData.addColumn("16");
+  tableRawData.addColumn("17");
+  tableRawData.addColumn("18");
+  tableRawData.addColumn("19");
+  tableRawData.addColumn("20");
+  tableRawData.addColumn("21");
+  tableRawData.addColumn("22");
+  tableRawData.addColumn("23");
+  tableRawData.addColumn("24");
+  tableRawData.addColumn("25");
+  
 }
 
 void addCommonValuesToTableStart(){
@@ -329,25 +380,45 @@ void addCommonValuesToTableStart(){
   resultsNewRow.setLong("tod", timeOfDay.getTime());
   resultsNewRow.setString("username", "Username");
   resultsNewRow.setLong("seed", seedValue);
-  
-  resultsNewRow.setLong("tod", timeOfDay.getTime());
-  resultsNewRow.setString("username", "Username");
-  
+  trialNumber = tableResults.getRowCount();
+  resultsNewRow.setInt("Trial #", trialNumber);
 }
 
 void logTrialResults(String trial){
+  averageTargets = (averageTargets/24)/1000.0;
   resultsNewRow.setFloat(trial + "Time", timeOfTrial);
   resultsNewRow.setFloat(trial + "Errors", errors);
-  resultsNewRow.setFloat(trial + "Average Time Between Targets", 0);
+  resultsNewRow.setFloat(trial + "Average Time Between Targets", averageTargets);
   resultsNewRow.setFloat(trial + "Standard Devation Between Targets", 0);
 }
 
-void saveTables(){
-  
-  
+void saveTables(){  
+  saveTable(tableResults, "results/results_" + username +".csv");
+  saveTable(tableError, "error/error_" + username +".csv");
+  saveTable(tableRawData, "rawData/rawData_" + username +".csv");
 }
+
+void addRowError(String expTarget, String acqTarget){
+  TableRow errorNewRow = tableError.addRow();
+  errorNewRow.setLong("tod", timeOfDay.getTime());
+  errorNewRow.setString("username", "Username");
+  errorNewRow.setInt("Trial #", trialNumber);
+  errorNewRow.setString("Expected Target", expTarget);
+  errorNewRow.setString("Acquired Target", acqTarget);
+}
+
+boolean fileExists(String filename) {
+ File file = new File(sketchPath(filename));
+
+ if(!file.exists())
+  return false;
+   
+ return true;
+}
+
 void beforeExit() {
   logTrialResults("Trial B ");
+  saveTables();
   exit();
 }
 
