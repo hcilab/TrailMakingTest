@@ -23,5 +23,6 @@
 
   The seed value is assigned a default value (the current system time in
   milliseconds) when:
-    - the file `randomSeed` does not exist
-    - the file `randomSeed` does not contain a valid numeric, integer format
+
+  - the file `randomSeed` does not exist
+  - the file `randomSeed` does not contain a valid numeric, integer format
