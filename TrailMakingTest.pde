@@ -8,6 +8,7 @@ ArrayList<Line> currentLines = new ArrayList<Line>();
 
 ArrayList<String> trail;
 int index;
+int radius;
 
 long startTime;
 long stopTime;
@@ -44,6 +45,8 @@ void setup() {
   // created.
   long seedValue = System.currentTimeMillis();
   randomSeed(seedValue);
+
+  radius = adjustTargetSize();
 
   index = 0;
   errors = 0;
@@ -173,9 +176,9 @@ void generateCirclesTrail(ArrayList<String> trail) {
   currentLines.clear();
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
-    Circle c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex));
+    Circle c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex), radius);
     while (isTouching(c) || !isInBounds(c)){
-      c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex));
+      c = new Circle((int)random(0, width/2), (int) random(0, height/2), texts.get(textIndex), radius);
     }
     circles.add(c);
     texts.remove(textIndex);
@@ -183,9 +186,9 @@ void generateCirclesTrail(ArrayList<String> trail) {
 
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
-    Circle c = new Circle((int)random(width/2, width), (int) random(0, height/2), texts.get(textIndex));
+    Circle c = new Circle((int)random(width/2, width), (int) random(0, height/2), texts.get(textIndex), radius);
     while (isTouching(c) || !isInBounds(c)) {
-      c = new Circle((int)random(width/2, width), (int) random(0, height/2), texts.get(textIndex));
+      c = new Circle((int)random(width/2, width), (int) random(0, height/2), texts.get(textIndex), radius);
     }
     circles.add(c);
     texts.remove(textIndex);
@@ -193,9 +196,9 @@ void generateCirclesTrail(ArrayList<String> trail) {
 
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
-    Circle c = new Circle((int)random(0, width/2), (int)random(height/2, height), texts.get(textIndex));
+    Circle c = new Circle((int)random(0, width/2), (int)random(height/2, height), texts.get(textIndex), radius);
     while (isTouching(c) || !isInBounds(c)) {
-      c = new Circle((int)random(0, width/2), (int)random(height/2, height), texts.get(textIndex));
+      c = new Circle((int)random(0, width/2), (int)random(height/2, height), texts.get(textIndex), radius);
     }
     circles.add(c);
     texts.remove(textIndex);
@@ -203,9 +206,9 @@ void generateCirclesTrail(ArrayList<String> trail) {
 
   for (int i=0; i<3; i++) {
     int textIndex = (int)random(texts.size());
-    Circle c = new Circle((int)random(width/2, width), (int)random(height/2, height), texts.get(textIndex));
+    Circle c = new Circle((int)random(width/2, width), (int)random(height/2, height), texts.get(textIndex), radius);
     while (isTouching(c) || !isInBounds(c)) {
-      c = new Circle((int)random(width/2, width), (int)random(height/2, height), texts.get(textIndex));
+      c = new Circle((int)random(width/2, width), (int)random(height/2, height), texts.get(textIndex), radius);
     }
     circles.add(c);
     texts.remove(textIndex);
@@ -214,9 +217,9 @@ void generateCirclesTrail(ArrayList<String> trail) {
   int circlesLeft = texts.size();
   for (int i=0; i<circlesLeft; i++) {
     int textIndex = (int)random(texts.size());
-    Circle c = new Circle((int)random(0, width), (int)random(0, height), texts.get(textIndex));
+    Circle c = new Circle((int)random(0, width), (int)random(0, height), texts.get(textIndex), radius);
     while (isTouching(c) || !isInBounds(c)) {
-      c = new Circle((int)random(0, width), (int)random(0, height), texts.get(textIndex));
+      c = new Circle((int)random(0, width), (int)random(0, height), texts.get(textIndex), radius);
     }
     circles.add(c);
     texts.remove(textIndex);
@@ -347,4 +350,15 @@ void keyPressed() {
     key = 0; // override so that signal is not propogated on to kill window
     return;
   }
+}
+
+int adjustTargetSize() {
+  int radius;
+  if (width > height) {
+    radius = Math.round(height/22.5);
+  }
+  else {
+    radius = Math.round(width/22.5);
+  }
+  return radius;
 }
