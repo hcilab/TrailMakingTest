@@ -44,6 +44,11 @@ PFont font;
 int fontSize = 30;
 int bottomBarHeight = fontSize;
 
+
+boolean mouseClicked;
+int mouseClickedX;
+int mouseClickedY;
+
 void setup() {
   username = loadUsername();
   seedValue = loadRandomSeed();
@@ -58,6 +63,10 @@ void setup() {
   textFont(font);
 
   radius = adjustTargetSize();
+
+  mouseClicked = false;
+  mouseClickedX = 0;
+  mouseClickedY = 0;
 
   index = 0;
   errors = 0;
@@ -86,7 +95,7 @@ void draw() {
   int r,g,b;
   for (Circle c : circles) {
     if (c.passed && c.isMoused() && returnToPrevious) {
-      if (c.text.equals(circles.get(index-1).text)) {
+      if (c.text.equals(circles.get(index-1).text) && mouseClicked && clickedWithinCircle(c)) {
         returnToPrevious = false;
         drawCurrentLines = true;
         currentLines.clear();
@@ -100,7 +109,7 @@ void draw() {
       g=255;
       b=0;
     }
-    else if (c.isMoused() && c.text.equals(trail.get(index)) && !returnToPrevious) {
+    else if (c.isMoused() && c.text.equals(trail.get(index)) && !returnToPrevious && mouseClicked) {
       drawCurrentLines = true;
       currentLines.clear();
       if (index>0) {
@@ -141,6 +150,7 @@ void draw() {
         else {
           beforeExit();
         }
+        mouseClicked = false;
       }
 
       if (c.text.equals("25")) {
@@ -194,6 +204,9 @@ void draw() {
 
   if (index < 1) {
     runningTime = 0;
+    mouseClicked = false;
+    drawCurrentLines = false;
+    returnToPrevious = false;
   }
   else {
     runningTime = ((System.currentTimeMillis()-startTime)/1000.0);
@@ -531,4 +544,24 @@ long loadRandomSeed() {
     return defaultValue;
   }
   return seed;
+}
+
+void mousePressed() {
+  mouseClicked = true;
+  mouseClickedX = mouseX;
+  mouseClickedY = mouseY;
+}
+
+void mouseReleased() {
+  mouseClicked = false;
+  drawCurrentLines = false;
+  returnToPrevious = true;
+}
+
+boolean clickedWithinCircle(Circle c) {
+  boolean withinCircle = false;
+  if (mouseClickedX > c.x-radius && mouseClickedX < c.x+radius && mouseClickedY > c.y - radius && mouseClickedY < c.y + radius) {
+    withinCircle = true;
+  }
+  return withinCircle;
 }
