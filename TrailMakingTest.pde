@@ -343,7 +343,7 @@ boolean isInBounds(Circle c) {
 
 void generateTables(){
 
-  if(fileExists("results/results_" + username +".csv")){
+  if(fileExists("logging/results/results_" + username +".csv")){
     tableResults = loadTable("results/results_" + username +".csv", "header");
   }
   else{
@@ -362,7 +362,7 @@ void generateTables(){
     tableResults.addColumn("Trial B Standard Devation Between Targets");
   }
   
-  if(fileExists("error/error_" + username +".csv")){
+  if(fileExists("logging/error/error_" + username +".csv")){
     tableError = loadTable("error/error_" + username +".csv", "header");
   }
   else{
@@ -374,7 +374,7 @@ void generateTables(){
     tableError.addColumn("Expected Target");
     tableError.addColumn("Acquired Target");
   }
-   if(fileExists("rawData/rawData_" + username +".csv")){
+   if(fileExists("logging/rawData/rawData_" + username +".csv")){
     tableRawData = loadTable("rawData/rawData_" + username +".csv", "header");
   }
   else{
@@ -436,9 +436,9 @@ float calcStandardDev(float mean, float[] targTimes){
 }
 
 void saveTables(){  
-  saveTable(tableResults, "results/results_" + username +".csv");
-  saveTable(tableError, "error/error_" + username +".csv");
-  saveTable(tableRawData, "rawData/rawData_" + username +".csv");
+  saveTable(tableResults, "logging/results/results_" + username +".csv");
+  saveTable(tableError, "logging/error/error_" + username +".csv");
+  saveTable(tableRawData, "logging/rawData/rawData_" + username +".csv");
 }
 
 boolean fileExists(String filename) {
