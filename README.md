@@ -45,7 +45,9 @@
   directly from target 1 to target 3 results in an error. When an error occurs
   the participant must return to the last successfully acquired target before
   continuing. Any subsequent acquistion of incorrect targets before returning to
-  the last successfully acquired target will result in further errors. 
+  the last successfully acquired target will result in further errors. However,
+  passing through any previously successfully acquired targets does __NOT__
+  count as an error.
 
   Additionally, in the _Click and Drag_ mode, if the participant releases the
   __left mouse button__ at any point during the trail, they must return to the
