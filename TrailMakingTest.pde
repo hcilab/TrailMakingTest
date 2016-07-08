@@ -555,7 +555,7 @@ long loadRandomSeed() {
 
   long seed = defaultValue;
   try {
-    seed = Integer.parseInt(seedString);
+    seed = Long.parseLong(seedString);
   } catch (Exception e) {
     return defaultValue;
   }
