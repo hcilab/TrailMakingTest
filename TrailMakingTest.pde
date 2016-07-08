@@ -147,7 +147,7 @@ void draw() {
         timeOfTrial = (stopTime-startTime)/1000.0;
         if(isTrialA) {
           logRawDataResults();
-          logTrialResults("Trial A ");
+          logTrialResults("Trail A ");
         }
         else {
           beforeExit();
@@ -363,20 +363,20 @@ void generateTables(){
   }
   else{
     tableResults  = new Table();
-    tableResults.addColumn("tod");
+    tableResults.addColumn("TOD");
     tableResults.addColumn("username");
     tableResults.addColumn("seed");
     tableResults.addColumn("Trial #");
-    tableResults.addColumn("Trial A Time");
-    tableResults.addColumn("Trial A Errors");
-    tableResults.addColumn("Trial A Average Time Between Targets");
-    tableResults.addColumn("Trial A Standard Devation Between Targets");
-    tableResults.addColumn("Trial A Path Length");
-    tableResults.addColumn("Trial B Time");
-    tableResults.addColumn("Trial B Errors");
-    tableResults.addColumn("Trial B Average Time Between Targets");
-    tableResults.addColumn("Trial B Standard Devation Between Targets");
-    tableResults.addColumn("Trial B Path Length");
+    tableResults.addColumn("Trail A Time");
+    tableResults.addColumn("Trail A Errors");
+    tableResults.addColumn("Trail A Average Time Between Targets");
+    tableResults.addColumn("Trail A Standard Deviation Between Targets");
+    tableResults.addColumn("Trail A Path Length");
+    tableResults.addColumn("Trail B Time");
+    tableResults.addColumn("Trail B Errors");
+    tableResults.addColumn("Trail B Average Time Between Targets");
+    tableResults.addColumn("Trail B Standard Deviation Between Targets");
+    tableResults.addColumn("Trail B Path Length");
   }
   
   if(fileExists("logging/error/error_" + username +".csv")){
@@ -384,10 +384,10 @@ void generateTables(){
   }
   else{
     tableError = new Table();
-    tableError.addColumn("tod");
+    tableError.addColumn("TOD");
     tableError.addColumn("username");
     tableError.addColumn("Trial #");
-    tableError.addColumn("Type");
+    tableError.addColumn("Trail");
     tableError.addColumn("Expected Target");
     tableError.addColumn("Acquired Target");
   }
@@ -396,13 +396,15 @@ void generateTables(){
   }
   else{
     tableRawData = new Table();
+    tableRawData.addColumn("TOD");
+    tableRawData.addColumn("username");
     tableRawData.addColumn("Trial #");
-    tableRawData.addColumn("Type");
+    tableRawData.addColumn("Trail");
     for(int i = 1; i < 25;i++){
       tableRawData.addColumn("Time " + i);
     }
     for(int i = 1; i < 25;i++){
-      tableRawData.addColumn("Error " + i);
+      tableRawData.addColumn("Errors " + i);
     }
     for(int i = 1; i < 25;i++){
       tableRawData.addColumn("Distance " + i);
@@ -411,7 +413,7 @@ void generateTables(){
 }
 
 void addCommonValuesToTableStart(){
-  resultsNewRow.setLong("tod", System.currentTimeMillis());
+  resultsNewRow.setLong("TOD", System.currentTimeMillis());
   resultsNewRow.setString("username", username);
   resultsNewRow.setLong("seed", seedValue);
   trialNumber = tableResults.getRowCount();
@@ -423,18 +425,20 @@ void logTrialResults(String trial){
   resultsNewRow.setFloat(trial + "Time", timeOfTrial);
   resultsNewRow.setFloat(trial + "Errors", errors);
   resultsNewRow.setFloat(trial + "Average Time Between Targets", averageTargets);
-  resultsNewRow.setFloat(trial + "Standard Devation Between Targets", calcStandardDev(averageTargets, targetTimes));
+  resultsNewRow.setFloat(trial + "Standard Deviation Between Targets", calcStandardDev(averageTargets, targetTimes));
   resultsNewRow.setFloat(trial + "Path Length", totalPathDistance);
 }
 
 void logRawDataResults(){
   TableRow rawDataNewRow = tableRawData.addRow();
-  rawDataNewRow.setString("Type", type);
+  rawDataNewRow.setLong("TOD", startTime);
+  rawDataNewRow.setString("username", username);
+  rawDataNewRow.setString("Trail", type);
   rawDataNewRow.setInt("Trial #", trialNumber);
   float pathDistance;
   for(int i = 1; i < 25;i++){
     rawDataNewRow.setFloat("Time " + i, targetTimes[i-1]);
-    rawDataNewRow.setFloat("Error " + i, targetErrors[i-1]);
+    rawDataNewRow.setFloat("Errors " + i, targetErrors[i-1]);
     pathDistance = circles.get(i-1).getDistanceTo(circles.get(i));
     totalPathDistance += pathDistance;
     rawDataNewRow.setFloat("Distance " + i, pathDistance);
@@ -443,10 +447,10 @@ void logRawDataResults(){
 
 void addRowError(String expTarget, String acqTarget){
   TableRow errorNewRow = tableError.addRow();
-  errorNewRow.setLong("tod", System.currentTimeMillis());
+  errorNewRow.setLong("TOD", System.currentTimeMillis());
   errorNewRow.setString("username", username);
   errorNewRow.setInt("Trial #", trialNumber);
-  errorNewRow.setString("Type", type);
+  errorNewRow.setString("Trail", type);
   errorNewRow.setString("Expected Target", expTarget);
   errorNewRow.setString("Acquired Target", acqTarget);
 }
@@ -477,7 +481,7 @@ boolean fileExists(String filename) {
 
 void beforeExit() {
   logRawDataResults();
-  logTrialResults("Trial B ");
+  logTrialResults("Trail B ");
   saveTables();
   exit();
 }
