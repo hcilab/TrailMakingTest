@@ -146,8 +146,8 @@ void draw() {
         println("Test Run: " + (stopTime-startTime)/1000.0 + " seconds (" + errors + " errors).");
         timeOfTrial = (stopTime-startTime)/1000.0;
         if(isTrialA) {
-          logTrialResults("Trial A ");
           logRawDataResults();
+          logTrialResults("Trial A ");
         }
         else {
           beforeExit();
@@ -437,6 +437,7 @@ void logRawDataResults(){
     rawDataNewRow.setFloat("Error " + i, targetErrors[i-1]);
     pathDistance = circles.get(i-1).getDistanceTo(circles.get(i));
     totalPathDistance += pathDistance;
+    rawDataNewRow.setFloat("Distance " + i, pathDistance);
   }
 }
 
@@ -475,8 +476,8 @@ boolean fileExists(String filename) {
 }
 
 void beforeExit() {
-  logTrialResults("Trial B ");
   logRawDataResults();
+  logTrialResults("Trial B ");
   saveTables();
   exit();
 }
