@@ -1,5 +1,9 @@
 # TrailMakingTest
 
+__make sure that all related Excel result files are closed during test runs.
+Microsoft Office products lock access to files while they are running,
+inhibiting the ability of the Trail Making Test to save results__
+
 
 ## Description
 
@@ -83,3 +87,99 @@
 
   - the file `randomSeed.txt` does not exist
   - the file `randomSeed.txt` does not contain a valid numeric, integer format
+
+
+## Output
+
+  Several `.csv` files (i.e., files which are viewable in a spreadsheet program
+  such as Microsoft Excel) are generated after completing a Trail Making Test.
+  These files are all found within a folder named `logging`, which will be
+  automatically generated after the first Trail Making Test run. The logging
+  folder contains 3 sub-folders, which will be discussed in detail in the
+  following sections. Additionally, results for each user (specified by the
+  contents of `username.txt`) will be written to a separate file, differentiated
+  by appending the filename with the current username. After running several
+  Trail Making Tests with both users Alice and Bob, the `logging` folder will
+  resemble the following hierarchy:
+
+    logging
+    |
+    |-- results
+    |  |
+    |  |-- results_Alice.csv
+    |  |-- results_Bob.csv
+    |
+    |-- errors
+    |  |
+    |  |-- errors_Alice.csv
+    |  |-- errors_Bob.csv
+    |
+    |-- rawData
+       |
+       |-- rawData_Alice.csv
+       |-- rawData_Bob.csv
+
+
+### results
+
+  This folder contains a 'summary' of what we think will be the most useful
+  information gathered during each test run. Each row of these files contains the
+  following fields:
+
+  - __TOD__: "Time of Day" that test occurred. Represented in 'epoch' format (i.e.,
+    milliseconds since 12:00am, Jan. 1st, 1970)
+  - __username__: The name of the user conducting the test. Specified in
+    `username.txt`
+  - __seed__: The numeric value used to 'initialize' the random sequence of
+    numbers used to generate target locations. Explicitly setting this number in
+    `randomSeed.txt` will create a repeatable version of this test.
+  - __Trial #__: A numeric value distinguishing runs for a particular user
+    (increments from 1)
+  - __Trail A/B Time__: Time required to complete the given trail
+  - __Trail A/B Errors__: Number of errors which occurred for the given trail 
+  - __Trail A/B Average Time Between Targets__: Calculated by dividing the total
+    time by the number of targets
+  - __Trail A/B Standard Deviation Between Targets__: Standard deviation of the
+    above mentioned average
+  - __Trail A/B Path Length__: The 'shortest path' (i.e., straight line) distance
+    of a path through all targets. This value can be used to 'normalize' test
+    times.
+
+### errors
+
+  This folder contains a description of every error that occurred during test
+  runs. Each row of these files contains the following fields:
+
+  - __TOD__: "Time of Day" at which error occurred. Represented in 'epoch' format (i.e.,
+    milliseconds since 12:00am, Jan. 1st, 1970)
+  - __username__: The name of the user conducting the test. Specified in
+    `username.txt`
+  - __Trial #__: Test run during which the error occurred. Can be used to
+    'match-up' with the corresponding results.csv file.
+  - __Trail__: Whether the error occurred on Trail A or B.
+  - __Expected Target__: The target that was supposed to be acquired.
+  - __Acquired Target__: The target that was actually acquired (resulting in the
+    error).
+
+### rawData
+
+  This folder contains the raw timing, error, and distance-between-target
+  information which can be used for further data analysis. Each row of these
+  files contains the following fields:
+
+  - __TOD__: "Time of Day" at which test occurred. Represented in 'epoch' format
+    (i.e., milliseconds since 12:00am, Jan. 1st, 1970)
+  - __username__: The name of the user conducting the test. Specified in
+    `username.txt`
+  - __Trial #__: A numeric value distinguishing runs for a particular user
+    (increments from 1)
+  - __Trail__: Whether the row represents data collected from Trail A or B.
+  - __Time X__: (24 columns) Represents the time required to travel from target
+    X to target X+1 (ex: Time 2 represents the time to travel from target 2 to
+    target 3)
+  - __Errors X__: (24 columns) Represents the number of errors which occurred
+    during travel from target X to target X+1 (ex: Errors 2 represents the
+    number of errors which occurred during travel from target 2 to target 3)
+  - __Distance X__: (24 columns) Represents the 'shortest path' (i.e., straight
+    line) distance between target X to target X+1 (ex: Distance 2 represents the
+    distance between target 2 and target 3)
