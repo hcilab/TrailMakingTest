@@ -53,7 +53,7 @@ int mouseClickedY;
 void setup() {
   username = loadUsername();
   seedValue = loadRandomSeed();
-  randomSeed(seedValue);
+  //randomSeed(seedValue);
 
   fullScreen();
   ellipseMode(CENTER);
@@ -73,10 +73,53 @@ void setup() {
   errors = 0;
   errorLogged = false;
   errorLoggedFor = "NULL";
-  trail = generateTrailA();
-  generateCirclesTrail(trail);
-  Collections.sort(circles, new TrailAComparator());
-  optimizePath();
+
+  // HAck =======================================================
+  Table input = loadTable("Subject3_Profile3_TMT.csv", "header");
+  Table output = new Table();
+  output.addColumn("seed");
+  for(int i = 1; i < 25;i++)
+    output.addColumn("DistanceA " + i);
+  for(int i = 1; i < 25;i++)
+    output.addColumn("DistanceB " + i);
+
+  for (TableRow r : input.rows()) {
+    long seed = r.getLong("seed");
+    randomSeed(seed);
+
+    // generate Trail A
+    trail = generateTrailA();
+    generateCirclesTrail(trail);
+    Collections.sort(circles, new TrailAComparator());
+    optimizePath();
+
+    // log distances
+    TableRow outputRow = output.addRow();
+    outputRow.setLong("seed", seed);
+    for(int i = 1; i < 25;i++){
+      float pathDistance = circles.get(i-1).getDistanceTo(circles.get(i));
+      outputRow.setFloat("DistanceA " + i, pathDistance);
+    }
+
+    // generate Trail B
+    trail = generateTrailB();
+    generateCirclesTrail(trail);
+    Collections.sort(circles, new TrailBComparator());
+    optimizePath();
+
+    // log distances
+    for(int i = 1; i < 25;i++){
+      float pathDistance = circles.get(i-1).getDistanceTo(circles.get(i));
+      outputRow.setFloat("DistanceB " + i, pathDistance);
+    }
+  }
+
+  String outputFile = "output3-3.csv";
+  saveTable(output, outputFile);
+  println("Saved data successfully to: " + outputFile);
+  System.exit(0);
+  // =================================================================
+
   returnToPrevious = false;
   drawCurrentLines = false;
   targetTimes = new float[24];
