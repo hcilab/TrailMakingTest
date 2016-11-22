@@ -75,16 +75,27 @@ void setup() {
   errorLoggedFor = "NULL";
 
   // HAck =======================================================
-  Table input = loadTable("Subject3_Profile3_TMT.csv", "header");
+  Table input = loadTable("results-sample.csv", "header");
   Table output = new Table();
   output.addColumn("seed");
   for(int i = 1; i < 25;i++)
     output.addColumn("DistanceA " + i);
+  for(int i = 1; i <= 25;i++){
+    output.addColumn("xA " + i);
+    output.addColumn("yA " + i);
+  }
   for(int i = 1; i < 25;i++)
     output.addColumn("DistanceB " + i);
+  for(int i = 1; i <= 25;i++){
+    output.addColumn("xB " + i);
+    output.addColumn("yB " + i);
+  }
+
+
 
   for (TableRow r : input.rows()) {
     long seed = r.getLong("seed");
+    println(seed);
     randomSeed(seed);
 
     // generate Trail A
@@ -96,9 +107,15 @@ void setup() {
     // log distances
     TableRow outputRow = output.addRow();
     outputRow.setLong("seed", seed);
+    outputRow.setFloat("xA " + 1, circles.get(0).x);
+    outputRow.setFloat("yA " + 1, circles.get(0).y);
+    int j = 0;
     for(int i = 1; i < 25;i++){
       float pathDistance = circles.get(i-1).getDistanceTo(circles.get(i));
       outputRow.setFloat("DistanceA " + i, pathDistance);
+      j = i+1;
+      outputRow.setFloat("xA " + j, circles.get(i).x);
+      outputRow.setFloat("yA " + j, circles.get(i).y);
     }
 
     // generate Trail B
@@ -108,13 +125,18 @@ void setup() {
     optimizePath();
 
     // log distances
+    outputRow.setFloat("xB " + 1, circles.get(0).x);
+    outputRow.setFloat("yB " + 1, circles.get(0).y);
     for(int i = 1; i < 25;i++){
       float pathDistance = circles.get(i-1).getDistanceTo(circles.get(i));
       outputRow.setFloat("DistanceB " + i, pathDistance);
+      j = i+1;
+      outputRow.setFloat("xB " + j, circles.get(i).x);
+      outputRow.setFloat("yB " + j, circles.get(i).y);
     }
   }
 
-  String outputFile = "output3-3.csv";
+  String outputFile = "output-sample.csv";
   saveTable(output, outputFile);
   println("Saved data successfully to: " + outputFile);
   System.exit(0);
