@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
+import java.io.File;
+
 ArrayList<Circle> circles = new ArrayList<Circle>();
 ArrayList<Line> previousLines = new ArrayList<Line>();
 ArrayList<Line> currentLines = new ArrayList<Line>();
@@ -75,69 +77,77 @@ void setup() {
   errorLoggedFor = "NULL";
 
   // HAck =======================================================
-  Table input = loadTable("results-sample.csv", "header");
-  Table output = new Table();
-  output.addColumn("seed");
-  output.addColumn("trail");
+  File dir = new File("C:\\Users\\user\\code\\TrailMakingTest\\data\\results");
+  assert(dir.isDirectory());
+  
+  for (String filename : dir.list()) {
+    println("Processing: " + filename + "...");
 
-  for(int i = 1; i < 25;i++)
-    output.addColumn("Distance " + i);
-
-  for(int i = 1; i <= 25;i++){
-    output.addColumn("x " + i);
-    output.addColumn("y " + i);
-  }
-
-
-  for (TableRow r : input.rows()) {
-    long seed = r.getLong("seed");
-    randomSeed(seed);
-
-    // generate Trail A
-    trail = generateTrailA();
-    generateCirclesTrail(trail);
-    Collections.sort(circles, new TrailAComparator());
-    optimizePath();
-
-    // log distances
-    TableRow outputRow = output.addRow();
-    outputRow.setLong("seed", seed);
-    outputRow.setString("trail", "A");
-    outputRow.setFloat("x " + 1, circles.get(0).x);
-    outputRow.setFloat("y " + 1, circles.get(0).y);
-    for(int i = 1; i < 25;i++){
-      float pathDistance = circles.get(i-1).getDistanceTo(circles.get(i));
-      outputRow.setFloat("Distance " + i, pathDistance);
-      outputRow.setFloat("x " + (i+1), circles.get(i).x);
-      outputRow.setFloat("y " + (i+1), circles.get(i).y);
+    Table input = loadTable("results/" + filename, "header");
+    Table output = new Table();
+    output.addColumn("seed");
+    output.addColumn("trail");
+  
+    for(int i = 1; i < 25;i++)
+      output.addColumn("Distance " + i);
+  
+    for(int i = 1; i <= 25;i++){
+      output.addColumn("x " + i);
+      output.addColumn("y " + i);
     }
-
-    // generate Trail B
-    trail = generateTrailB();
-    generateCirclesTrail(trail);
-    Collections.sort(circles, new TrailBComparator());
-    optimizePath();
-
-    // log distances
-    outputRow = output.addRow();
-    outputRow.setString("trail", "B");
-    outputRow.setLong("seed", seed);
-    outputRow.setFloat("x " + 1, circles.get(0).x);
-    outputRow.setFloat("y " + 1, circles.get(0).y);
-    for(int i = 1; i < 25;i++){
-      float pathDistance = circles.get(i-1).getDistanceTo(circles.get(i));
-      outputRow.setFloat("Distance " + i, pathDistance);
-      outputRow.setFloat("x " + (i+1), circles.get(i).x);
-      outputRow.setFloat("y " + (i+1), circles.get(i).y);
+  
+  
+    for (TableRow r : input.rows()) {
+      long seed = r.getLong("seed");
+      randomSeed(seed);
+  
+      // generate Trail A
+      trail = generateTrailA();
+      generateCirclesTrail(trail);
+      Collections.sort(circles, new TrailAComparator());
+      optimizePath();
+  
+      // log distances
+      TableRow outputRow = output.addRow();
+      outputRow.setLong("seed", seed);
+      outputRow.setString("trail", "A");
+      outputRow.setFloat("x " + 1, circles.get(0).x);
+      outputRow.setFloat("y " + 1, circles.get(0).y);
+      for(int i = 1; i < 25;i++){
+        float pathDistance = circles.get(i-1).getDistanceTo(circles.get(i));
+        outputRow.setFloat("Distance " + i, pathDistance);
+        outputRow.setFloat("x " + (i+1), circles.get(i).x);
+        outputRow.setFloat("y " + (i+1), circles.get(i).y);
+      }
+  
+      // generate Trail B
+      trail = generateTrailB();
+      generateCirclesTrail(trail);
+      Collections.sort(circles, new TrailBComparator());
+      optimizePath();
+  
+      // log distances
+      outputRow = output.addRow();
+      outputRow.setString("trail", "B");
+      outputRow.setLong("seed", seed);
+      outputRow.setFloat("x " + 1, circles.get(0).x);
+      outputRow.setFloat("y " + 1, circles.get(0).y);
+      for(int i = 1; i < 25;i++){
+        float pathDistance = circles.get(i-1).getDistanceTo(circles.get(i));
+        outputRow.setFloat("Distance " + i, pathDistance);
+        outputRow.setFloat("x " + (i+1), circles.get(i).x);
+        outputRow.setFloat("y " + (i+1), circles.get(i).y);
+      }
     }
+  
+    String outputFile = "regenerated/" + filename;
+    saveTable(output, outputFile);
+    println("Saved data successfully to: " + outputFile);
   }
-
-  String outputFile = "output-sample.csv";
-  saveTable(output, outputFile);
-  println("Saved data successfully to: " + outputFile);
   System.exit(0);
   // =================================================================
 
+  
   returnToPrevious = false;
   drawCurrentLines = false;
   targetTimes = new float[24];
